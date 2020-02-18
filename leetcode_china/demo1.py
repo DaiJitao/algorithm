@@ -60,11 +60,43 @@ class Solution:
         return max(dp)
 
 
+import math
+
+
+class Solution:
+    def reverse(self, x: int) -> int:
+        if x:
+            str_x = str(x)
+            if len(str_x) == 0:
+                return x
+            if x < 0:
+                str_x = str(int(math.fabs(x)))
+                x = int(str_x[::-1])
+                return -1 * x
+            str_x = str(x)
+            return int(str_x[::-1])
+
+
+
+
+# """ 字符串反转 """
+def reverse(content, topN):
+    '''
+    蛮力法
+    :param content:
+    :return:
+    '''
+    t = content[:topN]
+    return content[topN:]+t
+
+# """ 字符串反转 """
+def reverse2(content, topN):
+
+
+
 if __name__ == "__main__":
     l = [-2, 1, -3, 4, -1, 2, 1, -5, 4]
-    solution = Solution();
-    s = solution.maxSubArray(l)
-    print(s)
-    solution = Solution1()
-    s = solution.max_sumarray(l)
+    solution = Solution()
+    s = solution.reverse(-12333333333333339)
+    s = reverse("abcdef", topN=3)
     print(s)

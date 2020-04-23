@@ -77,8 +77,6 @@ class Solution:
             return int(str_x[::-1])
 
 
-
-
 # """ 字符串反转 """
 def reverse(content, topN):
     '''
@@ -87,16 +85,40 @@ def reverse(content, topN):
     :return:
     '''
     t = content[:topN]
-    return content[topN:]+t
+    return content[topN:] + t
+
 
 # """ 字符串反转 """
 def reverse2(content, topN):
+    pass
 
 
+def twoSum(nums, target):
+    res_dict = dict()  # 建立字典
+    for index, i in enumerate(nums):
+        key = str(i)
+        if key in res_dict:
+            res_dict.get(key).append(index)
+        else:
+            res_dict.update({key: [index] })
 
-if __name__ == "__main__":
+    for index, i in enumerate(nums):
+        plus = target - i  # 剩余的值
+        otherKey = str(plus)
+        indexLst = res_dict.get(otherKey)
+        # indexLst.remove(index)
+        s = indexLst.append(index)
+    return s
+
+
+if __name__ == "__main__1":
     l = [-2, 1, -3, 4, -1, 2, 1, -5, 4]
     solution = Solution()
     s = solution.reverse(-12333333333333339)
     s = reverse("abcdef", topN=3)
+    print(s)
+
+if __name__ == '__main__':
+    t = [0,0,2,7,9]
+    s = twoSum(t, 9)
     print(s)

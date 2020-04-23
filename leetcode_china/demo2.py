@@ -25,11 +25,15 @@ class Solution:
         return a
 
 
-
+class Solution3:
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+        pass
 
 
 
 if __name__ == '__main__':
-    solution = Solution()
-    nums = [2, 1, 2, 1, 3]
-    print(solution.singleNumber(nums))
+    s = Solution3()
+    nums1 = [1,2,4]
+    nums2 = [2,3]
+    print(s.findMedianSortedArrays(nums1, nums2))
+

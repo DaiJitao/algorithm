@@ -28,8 +28,6 @@ class Stack:
 
 
 """前序遍历 非递归实现"""
-
-
 def pre_print(root: Node):
     stack = Stack()
     stack.push(root)
@@ -43,7 +41,14 @@ def pre_print(root: Node):
             stack.push(root.left)
         print(len(stack.items))
 
+##############################################################
+# 求解二叉树中任意两个节点的最近公共祖先
+##############################################################
 
+
+
+
+#############################################################
 if __name__ == "__main__":
     root = Node(data=1)
     n2 = Node(data=2)

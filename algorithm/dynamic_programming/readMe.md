@@ -3,6 +3,8 @@
 ##### https://leetcode-cn.com/problems/regular-expression-matching/
 ### 2 表格路径算法
 #### https://leetcode-cn.com/problems/unique-paths/submissions/
+#### 3 https://leetcode-cn.com/problems/minimum-path-sum/
+
 
 ### 其他算法
 #### 1 链表合并

@@ -20,3 +20,5 @@ if __name__ == '__main__':
     res = Solution().multiply(num1, num2)
     print(res)
     print(int(num1) * int(num2))
+    name = "daijitao"
+    print(f"{name}")

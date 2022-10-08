@@ -12,6 +12,8 @@ NLP/pos_tagging/data/
 web_spider/douyin/VM2841.txt
 DeepLearning/pytorch/mnist/
 datafountain/competitions_352/datasets/*
+leetcode_china/__pycache__/*
 
 
 
+leetcode_china/__pycache__/

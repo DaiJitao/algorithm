@@ -1,11 +1,17 @@
-
-
 def demo167(nums, target):
     n = len(nums)
     if n <= 1:
         return None
 
-    for index, element in enumerate(nums, start=1):
-        rest = target - element
-        if rest == element:
-            return ()
+    low = 0
+    high = n - 1
+    while low < high:
+        _sum = nums[low] + nums[high]
+        if _sum == target:
+            return [low + 1, high + 1]
+        if _sum < target:
+            pass
+
+
+        
+

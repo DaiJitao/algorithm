@@ -26,6 +26,14 @@ def demo189(nums, k=0):
     return nums
 
 
+def demo189(nums, k):
+    if len(nums) == 0 or k == 0:
+        return nums
+
+
+
+
+
 if __name__ == '__main__':
     nums = [1, 2, 3, 4, 5, 6]
     d = demo189(nums, k=2)

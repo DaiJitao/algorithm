@@ -1,20 +1,19 @@
-
-
 def demo169(nums):
-    n = len(nums)
-    temp = nums[0]
+    prior = nums[0]
     count = 0
-    for i in nums:
-        if i == temp:
+    for e in nums:
+        if e == prior:
             count += 1
         else:
             count -= 1
             if count == 0:
-                temp = i
+                prior = e
                 count = 1
 
-    return count
+    return prior
 
 
 if __name__ == '__main__':
-    pass
+    rs = [3, 3, 2, 3, 3, 4, 4]
+    rs = demo169(rs)
+    print(rs)

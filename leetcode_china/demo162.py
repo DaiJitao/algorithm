@@ -5,16 +5,16 @@ def demo162(nums):
 
     if n < 3:
         return None
-    letf = 0
+    left = 0
     right = n - 1
     i = int(n / 2)
     while i > 0 and i < (n - 1):
-        i = letf + int((right - letf) / 2)
+        i = left + int((right - left) / 2)
         if nums[i] > nums[i - 1] and nums[i] > nums[i + 1]:
             return i
 
         elif nums[i] > nums[i - 1] and nums[i] <= nums[i + 1]:
-            letf = i
+            left = i
 
         elif nums[i] < nums[i - 1] and nums[i] >= nums[i + 1]:
             right = i

@@ -1,29 +1,28 @@
-import unittest
-
-
-class MyTestCase(unittest.TestCase):
-    def test_something(self):
-        self.assertEqual(True, False)
-
 def demo162(nums):
     if nums is None:
         return
     n = len(nums)
-    if n <=2:
+    if n <= 2:
         return
 
-    midd = n // 2
-    left = midd - 1
-    right = midd + 1
-    while 0 < left < midd < right < n:
-        if nums[left] < nums[midd] > nums[right]:
+    left = 0
+    right = n - 1
+    midd = left + (right - left) // 2
+    while 1 < midd < n - 1:
+        if nums[midd - 1] < nums[midd] > nums[midd + 1]:
             return midd
-        if nums[left] < nums[midd] < nums[right]:
+
+        elif nums[midd - 1] <= nums[midd] <= nums[midd + 1]:
             left = midd
-            midd = right
-            right += 1
-        
+
+        elif nums[midd - 1] >= nums[midd] >= nums[midd + 1]:
+            right = midd
+
+        midd = left + (right - left) // 2
 
 
 if __name__ == '__main__':
-    unittest.main()
+    nums = [1, 2, 1, 3, 4, 5, 3, 4, 2]
+    nums = [17, 16, 24, 14, 11, 6, 5, 11, 3, 2, 1]
+    res = demo162(nums)
+    print(res)

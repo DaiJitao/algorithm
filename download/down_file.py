@@ -25,8 +25,9 @@ def mk_name(min_, max_):
     return names
 
 
-interval = [100, 8.3, 9.2, 10, 13, 15, 20, 301, 140, 123, 5, 15, 118, 1.6, 119, 57, 16, 6, 7, 1, 5, 54.5, 33.8, 21.8,
-            6.6, 8, 7, 10, 11, 12.3, 47, 5.5, 54, 5]
+interval = [100, 8.3, 9.2, 10, 13, 15, 20, 150, 140, 123, 5, 15, 3.3, 118, 1.6, 119, 57, 16, 6, 7, 1, 5, 54.5, 33.8,
+            21.8,
+            6.6, 8, 7, 10, 11, 12.3, 47, 5.5, 54, 11.5]
 
 
 def mkdir(path):
@@ -34,25 +35,25 @@ def mkdir(path):
         os.mkdir(path)
 
 
-def url_html_parser(html):
-    files = {}
-    soup = BeautifulSoup(html, 'lxml')
-    tables = soup.find_all('table', attrs={'bordercolor': "#CCCCCC", 'cellspacing': 0, 'border': "1"})
-    for tb in tables:
-        for tb in tables:
-            inner_trs = tb.find_all("tr")[1:]
-            for tr in inner_trs:
-                tds = tr.find_all('td')
-                if len(tds) == 3:
-                    name = tds[0].get_text().strip()
-                    num = tds[2].get_text().strip()
-                    url = tds[1].find('a')['href']
-                    key = '{}_{}卷'.format(name, num)
-                    if key in files:
-                        key += '_2'
-                    else:
-                        files[key] = url_cleaner(url)
-    return files
+# def url_html_parser(html):
+#     files = {}
+#     soup = BeautifulSoup(html, 'lxml')
+#     tables = soup.find_all('table', attrs={'bordercolor': "#CCCCCC", 'cellspacing': 0, 'border': "1"})
+#     for tb in tables:
+#         for tb in tables:
+#             inner_trs = tb.find_all("tr")[1:]
+#             for tr in inner_trs:
+#                 tds = tr.find_all('td')
+#                 if len(tds) == 3:
+#                     name = tds[0].get_text().strip()
+#                     num = tds[2].get_text().strip()
+#                     url = tds[1].find('a')['href']
+#                     key = '{}_{}卷'.format(name, num)
+#                     if key in files:
+#                         key += '_2'
+#                     else:
+#                         files[key] = url_cleaner(url)
+#     return files
 
 
 def url_cleaner(url):
@@ -205,10 +206,11 @@ class LUBU():
         if self.files == None or len(self.files) == 0:
             raise Exception()
 
+        print('files={}'.format(self.files))
+
     def __init_files(self, name, url):
         """下载文件地址"""
         inf = r'D:/myData/大正藏典籍分类/{}/index.html'.format(name)
-
         response = requests.get(url, stream=True, timeout=300)
         if response.status_code == 200:
             html = response.text
@@ -253,6 +255,7 @@ class LUBU():
         """
         failed_file = base_dir + '/load_failed.txt'
         try:
+            file_name = file_name.replace('*', '_')
             pdf_file = base_dir + '/' + file_name + '.pdf'
 
             if os.path.exists(pdf_file):
@@ -268,17 +271,27 @@ class LUBU():
                     fp.write(response.content)
                 print("saved pdf in {}".format(pdf_file))
                 res = np.random.choice(interval, size=1)
-                print("sleep {}\n".format(res[0]))
+                print("sleep {}".format(res[0]))
                 time.sleep(res[0])
             else:
                 print(f"error:{response.status_code}")
-                raise Exception(response.status_code)
+                line = 'url: {}, name:{}\n'.format(url, file_name)
+                print(f"error:{response.status_code}, load_file: {line}")
+                with open(failed_file, mode='a', encoding='utf-8') as fp:
+                    fp.write('url: {}, name:{}\n'.format(url, file_name))
+
+                print('saved in {}'.find(failed_file))
         except Exception as e:
             time.sleep(3)
             with open(failed_file, mode='a', encoding='utf-8') as fp:
                 fp.write('url: {}, name:{}\n'.format(url, file_name))
 
             print('saved in {}'.find(failed_file))
+        print()
+
+
+class ZhongGuanBu(LUBU):
+    pass
 
 
 class MiJiaoBu(LUBU):
@@ -888,7 +901,223 @@ class MiJiaoBu(LUBU):
              '龍樹五明論_2卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra10/T21n1420.pdf'}
 
 
+class AHanBu(LUBU):
+    pass
+
+# 已开始
+name2url_task1 = \
+    {'毘曇部': 'https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra13.jsp',
+     '中觀部': 'https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra14.jsp',
+     '瑜伽部': 'https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra15.jsp'}
+
+# 已开始
+name2url_task3 = \
+    {'論集部': 'https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra16.jsp',
+     '經疏部':'https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra17.jsp',
+     '律疏部': 'https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra18.jsp',
+     '論疏部': 'https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra19.jsp'}
+
+# 已开始
+name2url_task4 = \
+    {'諸宗部': 'https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra20.jsp',
+     '史傳部': 'https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra21.jsp',
+     '事彙部': 'https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra22.jsp',
+     '外教部': 'https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra23.jsp'}
+
+# 已开始
+name2url_task1 = \
+    {'目錄部': 'https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra24.jsp',
+     '古逸部': 'https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra25.jsp',
+     '疑似部': 'https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra26.jsp'}
+
 if __name__ == '__main__':
+    bdir = r'C:\Users\daijitao\Desktop\data\data\經集部'
+    fiels = {}
+    with open(bdir +'/load_failed.txt', encoding='utf-8') as fp:
+        for line in fp:
+            data = [data for data in line.strip().split(',')]
+            url = data[0].split(':')[-1].strip()
+            name = data[1].split(':')[-1].strip()
+            fiels[name] = 'https:' + url
+    print(fiels)
+    task = ZhongGuanBu(url, name, files=fiels)
+    task.load(bdir)
+
+if __name__ == '__main__1':
+    name = '阿含部'
+    url = 'https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra1.jsp'
+    bdir = r'D:/myData/大正藏典籍分类/{}'.format(name)
+    mkdir(bdir)
+    files = {'長阿含經_22卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0001.pdf',
+             '佛說七佛經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0002.pdf',
+             '毘婆尸佛經_2卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0003.pdf',
+             '七佛父母姓字經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0004.pdf',
+             '佛般泥洹經_2卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0005.pdf',
+             '般泥洹經_2卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0006.pdf',
+             '大般涅槃經_3卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0007.pdf',
+             '大堅固婆羅門緣起經_2卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0008.pdf',
+             '佛說人仙經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0009.pdf',
+             '白衣金幢二婆羅門緣起經_3卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0010.pdf',
+             '尼拘陀梵志經_2卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0011.pdf',
+             '大集法門經_2卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0012.pdf',
+             '長阿含十報法經_2卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0013.pdf',
+             '佛說人本欲生經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0014.pdf',
+             '佛說帝釋所問經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0015.pdf',
+             '佛說尸迦羅越六方禮經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0016.pdf',
+             '佛說善生子經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0017.pdf',
+             '佛說信佛功德經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0018.pdf',
+             '佛說大三摩惹經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0019.pdf',
+             '佛開解梵志阿颰經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0020.pdf',
+             '佛說梵網六十二見經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0021.pdf',
+             '佛說寂志果經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0022.pdf',
+             '大樓炭經_6卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0023.pdf',
+             '起世經_10卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0024.pdf',
+             '起世因本經_10卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0025.pdf',
+             '中阿含經_60卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0026.pdf',
+             '佛說七知經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0027.pdf',
+             '佛說園生樹經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0028.pdf',
+             '佛說鹹水喻經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0029.pdf',
+             '佛說薩缽多酥哩踰捺野經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0030.pdf',
+             '佛說一切流攝守因經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0031.pdf',
+             '佛說四諦經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0032.pdf',
+             '佛說恒水經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0033.pdf',
+             '佛說法海經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0034.pdf',
+             '佛說海八德經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0035.pdf',
+             '佛說本相猗致經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0036.pdf',
+             '佛說緣本致經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0037.pdf',
+             '佛說輪王七寶經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0038.pdf',
+             '佛說頂生王故事經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0039.pdf',
+             '佛說文陀竭王經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0040.pdf',
+             '佛說頻婆娑羅王經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0041.pdf',
+             '佛說鐵城泥犁經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0042.pdf',
+             '佛說閻羅王五天使者經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0043.pdf',
+             '佛說古來世時經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0044.pdf',
+             '大正句王經_2卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0045.pdf',
+             '佛說阿那律八念經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0046.pdf',
+             '佛說離睡經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0047.pdf',
+             '佛說是法非法經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0048.pdf',
+             '佛說求欲經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0049.pdf',
+             '佛說受歲經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0050.pdf',
+             '佛說梵志計水淨經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0051.pdf',
+             '佛說大生義經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0052.pdf',
+             '佛說苦陰經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0053.pdf',
+             '佛說釋摩男本四子經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0054.pdf',
+             '佛說苦陰因事經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0055.pdf',
+             '佛說樂想經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0056.pdf',
+             '佛說漏分布經 (出中阿含令劫意)_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0057.pdf',
+             '佛說阿耨風經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0058.pdf',
+             '佛說諸法本經 (出中阿含別翻)_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0059.pdf',
+             '佛說瞿曇彌記果經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0060.pdf',
+             '佛說受新歲經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0061.pdf',
+             '佛說新歲經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0062.pdf',
+             '佛說解夏經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0063.pdf',
+             '佛說瞻婆比丘經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0064.pdf',
+             '佛說伏婬經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0065.pdf',
+             '佛說魔嬈亂經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0066.pdf',
+             '弊魔試目連經 (一名魔嬈亂經)_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0067.pdf',
+             '佛說賴吒和羅經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0068.pdf',
+             '佛說護國經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0069.pdf',
+             '佛說數經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0070.pdf',
+             '梵志頞波羅延問種尊經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0071.pdf',
+             '佛說三歸五戒慈心厭離功德經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0072.pdf',
+             '佛說須達經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0073.pdf',
+             '佛說長者施報經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0074.pdf',
+             '佛為黃竹園老婆羅門說學經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0075.pdf',
+             '梵摩渝經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0076.pdf',
+             '佛說尊上經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0077.pdf',
+             '佛說兜調經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0078.pdf',
+             '佛說鸚鵡經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0079.pdf',
+             '佛為首迦長者說業報差別經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0080.pdf',
+             '分別善惡報應經_2卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0081.pdf',
+             '佛說意經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0082.pdf',
+             '佛說應法經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0083.pdf',
+             '佛說分別布施經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0084.pdf',
+             '佛說息諍因緣經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0085.pdf',
+             '佛說泥犁經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0086.pdf',
+             '佛說齋經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0087.pdf',
+             '優陂夷墮舍迦經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0088.pdf',
+             '佛說八關齋經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0089.pdf',
+             '佛說鞞摩肅經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0090.pdf',
+             '佛說婆羅門子命終愛念不離經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0091.pdf',
+             '佛說十支居士八城人經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0092.pdf',
+             '佛說邪見經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0093.pdf',
+             '佛說箭喻經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0094.pdf',
+             '佛說蟻喻經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0095.pdf',
+             '佛說治意經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0096.pdf',
+             '廣義法門經 (出中阿含經一品)_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0097.pdf',
+             '佛說普法義經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T01n0098.pdf',
+             '雜阿含經_50卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0099.pdf',
+             '別譯雜阿含經_16卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0100.pdf',
+             '雜阿含經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0101.pdf',
+             '佛說五蘊皆空經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0102.pdf',
+             '佛說聖法印經 (天竺名阿遮曇摩文圖)_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0103.pdf',
+             '佛說法印經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0104.pdf',
+             '五陰譬喻經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0105.pdf',
+             '佛說水沫所漂經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0106.pdf',
+             '佛說不自守意經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0107.pdf',
+             '佛說滿願子經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0108.pdf',
+             '佛說轉法輪經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0109.pdf',
+             '佛說三轉法輪經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0110.pdf',
+             '佛說相應相可經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0111.pdf',
+             '佛說八正道經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0112.pdf',
+             '佛說難提釋經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0113.pdf',
+             '佛說馬有三相經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0114.pdf',
+             '佛說馬有八態譬人經 (出雜阿含別譯)_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0115.pdf',
+             '佛說戒德香經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0116.pdf',
+             '佛說戒香經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0117.pdf',
+             '佛說鴦掘摩經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0118.pdf',
+             '佛說鴦崛髻經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0119.pdf',
+             '央掘魔羅經_4卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0120.pdf',
+             '佛說月喻經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0121.pdf',
+             '佛說波斯匿王太后崩塵土坌身經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0122.pdf',
+             '佛說放牛經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0123.pdf',
+             '緣起經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0124.pdf',
+             '增壹阿含經_51卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0125.pdf',
+             '佛說阿羅漢具德經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0126.pdf',
+             '佛說四人出現世間經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0127.pdf',
+             '須摩提女經_2卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0128a.pdf',
+             '佛說三摩竭經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0129.pdf',
+             '佛說給孤長者女得度因緣經_3卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0130.pdf',
+             '佛說婆羅門避死經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0131.pdf',
+             '佛說食施獲五福報經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0132a.pdf',
+             '施食獲五福報經  (亦名佛說施色力經)_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0132b.pdf',
+             '頻毘娑羅王詣佛供養經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0133.pdf',
+             '佛說長者子六過出家經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0134.pdf',
+             '佛說力士移山經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0135.pdf',
+             '佛說四未曾有法經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0136.pdf',
+             '舍利弗摩訶目連遊四衢經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0137.pdf',
+             '佛說十一想思念如來經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0138.pdf',
+             '佛說四泥犁經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0139.pdf',
+             '阿那邠邸化七子經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0140.pdf',
+             '佛說阿遬達經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0141.pdf',
+             '佛說玉耶女經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0142a.pdf',
+             '玉耶女經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0142b.pdf',
+             '玉耶經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0143.pdf',
+             '佛說大愛道般泥洹經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0144.pdf',
+             '佛母般泥洹經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0145.pdf',
+             '舍衛國王夢見十事經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0146.pdf',
+             '佛說舍衛國王十夢經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0147.pdf',
+             '國王不梨先泥十夢經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0148.pdf',
+             '佛說阿難同學經 (出增一阿含經)_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0149.pdf',
+             '佛說七處三觀經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0150A.pdf',
+             '佛說九橫經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0150B.pdf',
+             '佛說阿含正行經_1卷': 'http://buddhism.lib.ntu.edu.tw/FULLTEXT/sutra/chi_pdf/sutra1/T02n0151.pdf'}
+
+    task = ZhongGuanBu(url, name, files=files)
+    task.load(bdir)
+
+
+def zhongguan():
+    name = '中觀部'
+    url = 'https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra14.jsp'
+    bdir = r'D:/myData/大正藏典籍分类/{}'.format(name)
+    mkdir(bdir)
+
+    task = ZhongGuanBu(url, name)
+    task.load(bdir)
+
+
+def mijiao():
     name = '密教部'
     url = 'https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra10.jsp'
     bdir = r'D:/myData/大正藏典籍分类/{}'.format(name)
@@ -896,6 +1125,7 @@ if __name__ == '__main__':
 
     mijiao = MiJiaoBu(url, name, files=MiJiaoBu.files)
     mijiao.load(bdir)
+
 
 if __name__ == '__main__1':
     url = "https://buddhism.lib.ntu.edu.tw/sutra/chinese/taisho/sutra11.jsp"

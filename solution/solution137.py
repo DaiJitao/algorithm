@@ -2,4 +2,10 @@
 import sys
 
 def demo137(arr):
-    pass
+    if len(arr) == 0:
+        return None
+
+    if len(arr) <= 3:
+        return None
+
+

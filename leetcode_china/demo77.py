@@ -1,10 +1,10 @@
-def demo77(n, _sum, k):
+def demo77(n, k):
     nums = range(1, n + 1)
     path = []
     res = []
 
     def backtracking(nums, k):
-        if len(path) == k and sum(path) == _sum:
+        if len(path) == k:
             res.append(path[:])
             return
 
@@ -18,6 +18,6 @@ def demo77(n, _sum, k):
 
 
 if __name__ == '__main__':
-    n = 10
-    res = demo77(n, 3)
+    n = 4
+    res = demo77(n, 2)
     print(res)

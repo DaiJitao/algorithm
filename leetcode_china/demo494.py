@@ -8,11 +8,14 @@ class Solution:
 
         n = len(nums)
         _sum = sum(nums)
-        x = (_sum + target) / 2
+        x = (_sum + target) % 2
+        if x == 1:
+            return 0
 
         dp = [0] * (target + 1)
+        dp[0] = 1
         for i in nums:
-            for j in range(target+1, -1, -1):
+            for j in (1, target+1):
                 if j >= i:
-                    pass
+                    dp[j] += dp[j-i]
 

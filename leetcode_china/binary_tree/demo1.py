@@ -37,7 +37,7 @@ def lastOrder(root: TreeNode):
     frontTravel(root)
     return res
 
-#后序遍历，基于迭代实现
+#前序遍历，基于迭代实现
 def preOrder(root: TreeNode):
     if root is None:
         return []
@@ -48,6 +48,23 @@ def preOrder(root: TreeNode):
         res.append(node.val)
         if node.right is not None:
             stack.append(node.right)
+        if node.left is not None:
+            stack.append(node.left)
+
+    return res
+
+#后前序遍历，基于迭代实现
+def preOrder(root: TreeNode):
+    if root is None:
+        return []
+    stack = [root]
+    res = []
+    while stack:
+        node = stack.pop()
+        res.append(node.val)
+        if node.right is not None:
+            stack.append(node.right)
+
         if node.left is not None:
             stack.append(node.left)
 

@@ -1,6 +1,8 @@
 from typing import List
 from typing import Optional
 from collections import deque
+
+
 # Definition for a binary tree node.
 
 class TreeNode:
@@ -8,6 +10,7 @@ class TreeNode:
         self.val = val
         self.left = left
         self.right = right
+
 
 class Solution:
     def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
@@ -31,6 +34,7 @@ class Solution:
 
         return results
 
+
 class Solution:
     def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
         if root is None:
@@ -53,6 +57,28 @@ class Solution:
 
         return results
 
+
+class Solution:
+    def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
+        if root is None:
+            return []
+
+        que = [root]
+        temp = []
+        res = []
+        while que:
+            temp = []
+            for _ in range(len(que)):
+                node = que.pop()
+                temp.append(node.val)
+                if node.left is not None:
+                    que.insert(0, node.left)
+
+                if node.right is not None:
+                    que.insert(0, node.right)
+
+            res.append(temp[:])
+
+
 if __name__ == '__main__':
     pass
-

@@ -11,7 +11,7 @@ class Solution:
         path = []
         res = []
 
-        def backtracking(nums, k):
+        def backtracking(nums):
 
             if len(path) == k:
                 res.append(path[:])
@@ -19,10 +19,10 @@ class Solution:
 
             for index, i in enumerate(nums):
                 path.append(i)
-                backtracking(nums[index + 1:], k)
+                backtracking(nums[index + 1:])
                 path.pop()
 
-        backtracking(nums, k)
+        backtracking(nums)
         return res
 
 
@@ -52,5 +52,5 @@ class Solution:
 
 
 if __name__ == '__main__':
-    res = Solution().combine(4, 2)
+    res = Solution().combine(10, 2)
     print(res)

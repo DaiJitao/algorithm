@@ -12,7 +12,7 @@ np.set_printoptions(suppress=True)
 def scaled_dot_product_attention(q, k: tf.Tensor, v, mask):
     '''
     实现self-attention
-    :param q:
+    :param q: # (batch_size, num_heads, seq_len_q, depth)
     :param k:
     :param v:
     :param mask:

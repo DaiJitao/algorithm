@@ -52,31 +52,55 @@ class Solution(object):
         return max_
 
 
-class Solution(object):
-    def lengthOfLongestSubstring(self, s):
-        if s == None or len(s) == 0:
-            return 0
-        if len(s) == 1:
-            return 1
+class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        if not s:return 0
+        n = len(s)
+        if n <= 1:
+            return n
 
-        window = []
         pmax = 0
-        i = 0
-        window.append(s[0])
-        for j in range(1, len(s)):
-            if s[i] != s[j]:
-                window.append(s[j])
-            else:
-                i += 1
-                window = window[i:]
+        windows = set()
+        for i in range(n):
+            left = i
+            while left < n:
+                if s[left] not in windows:
+                    windows.add(s[left])
+                    left += 1
+                else:
+                    break
 
-            pamx = len(window) if len(window) > pmax else pmax
+            if len(windows) > pmax:
+                pmax = len(windows)
 
-        return pamx
+            windows.clear()
+
+        return pmax
+
+class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        if not s:return 0
+        left = 0
+        lookup = set()
+        n = len(s)
+        max_len = 0
+        cur_len = 0
+        for i in range(n):
+            cur_len += 1
+            while s[i] in lookup:
+                lookup.remove(s[left])
+                left += 1
+                cur_len -= 1
+            if cur_len > max_len:
+                max_len = cur_len
+            lookup.add(s[i])
+        return max_len
+
 
 
 if __name__ == '__main__':
     s = 'dvdf'
     s = 'pwwkew'
+    s = 'abcbcg'
     res = Solution().lengthOfLongestSubstring(s)
     print(res)

@@ -22,7 +22,7 @@ class ManualLinearRegression(nn.Module):
         # Computes the outputs / predictions
         return self.b + self.w * x
 
-if __name__ == '__main__':
+if __name__ == '__main__1':
     from transformers import DistilBertForSequenceClassification, BertForSequenceClassification
     torch.manual_seed(42)
     # bert_cls = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased', num_labels=2)
@@ -36,5 +36,14 @@ if __name__ == '__main__1':
     for layer in model.parameters():
         i += 1
         print(i, layer)
+
+if __name__ == '__main__':
+    a = torch.tensor([
+        [1, 5, 5, 2],
+        [9, -6, 2, 8],
+        [-3, 7, -9, 1]])
+    b = torch.argmax(a, dim=0)
+    print(b)
+    print(b.shape)
 
 
